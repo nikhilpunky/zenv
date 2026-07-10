@@ -1,71 +1,135 @@
-import React from 'react';
-import { Leaf, Compass, Gift, Heart } from 'lucide-react';
+import React, { useEffect, useRef, useContext } from 'react';
+import { Leaf, Compass, Gift, ArrowRight } from 'lucide-react';
+import { AppContext } from '../context/AppContext';
 
 export default function Hero() {
+  const imgRef = useRef(null);
+  const { setIsFinderOpen } = useContext(AppContext);
+
+  /* Subtle parallax on the right image panel only */
+  useEffect(() => {
+    const onScroll = () => {
+      const img = imgRef.current;
+      if (!img) return;
+      img.style.transform = `scale(1.06) translateY(${window.scrollY * 0.12}px)`;
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
   const handleShopNow = (e) => {
     e.preventDefault();
-    const element = document.getElementById('collection');
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
+    document.getElementById('collection')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleDiscover = (e) => {
+    e.preventDefault();
+    setIsFinderOpen(true);
   };
 
   return (
-    <section className="hero-section">
-      {/* Left: Text Block Overlaid directly on cinematic background */}
-      <div className="hero-content animate-fade-in">
-        <span className="hero-subtitle animate-slide-up delay-1">
-          CRAFTED FOR MOMENTS
-        </span>
-        <h1 className="hero-title animate-slide-up delay-2">
-          Scents that<br />
-          leave a lasting<br />
-          impression.
-        </h1>
-        <p className="hero-description animate-slide-up delay-3">
-          Luxury fragrances, thoughtfully crafted with the finest ingredients from around the world.
-        </p>
-        <div className="hero-cta animate-slide-up delay-3" style={{ animationDelay: '0.8s' }}>
-          <a href="#collection" className="btn-primary" onClick={handleShopNow}>
-            EXPLORE COLLECTIONS &nbsp;&rarr;
-          </a>
+    <section className="hero-split-section" aria-label="Hero — Crafted to Become Your Signature Scent">
+
+      {/* ── LEFT PANEL — charcoal content ── */}
+      <div className="hero-split-left">
+
+        {/* Vertical gold rule */}
+        <div className="hero-split-rule" aria-hidden="true" />
+
+        <div className="hero-split-content">
+
+          {/* Eyebrow */}
+          <span className="hero-eyebrow animate-hero-fade delay-hero-1">
+            <span className="hero-eyebrow-dot" />
+            ZENV Parfums — Maison de Haute Parfumerie
+          </span>
+
+          {/* Headline */}
+          <h1 className="hero-title animate-hero-up delay-hero-2">
+            Crafted to<br />
+            Become <em>Your</em><br />
+            Signature Scent
+          </h1>
+
+
+          {/* Sub-headline */}
+          <p className="hero-description animate-hero-up delay-hero-3">
+            Premium fragrances designed with timeless
+            elegance, finest ingredients, and enduring
+            performance for every occasion.
+          </p>
+
+          {/* CTAs */}
+          <div className="hero-cta animate-hero-up delay-hero-4">
+            <a
+              href="#collection"
+              id="hero-cta-shop"
+              className="hero-btn-primary"
+              onClick={handleShopNow}
+            >
+              Shop Collection
+              <ArrowRight size={14} strokeWidth={1.5} className="hero-btn-icon" />
+            </a>
+            <a
+              href="#fragrance-finder"
+              id="hero-cta-discover"
+              className="hero-btn-secondary"
+              onClick={handleDiscover}
+            >
+              Discover Your Scent
+            </a>
+          </div>
+
+          <div className="hero-trust animate-hero-fade delay-hero-5">
+            <div className="hero-trust-item">
+              <Leaf size={21} strokeWidth={1} />
+              <span>Finest</span>
+              <span>Ingredients</span>
+            </div>
+            <div className="hero-trust-item">
+              <Compass size={21} strokeWidth={1} />
+              <span>Long-Lasting</span>
+              <span>Scents</span>
+            </div>
+            <div className="hero-trust-item">
+              <Gift size={21} strokeWidth={1} />
+              <span>Elegant</span>
+              <span>Packaging</span>
+            </div>
+          </div>
+
+        </div>
+
+        {/* Scroll cue bottom-center of left panel */}
+        <div className="hero-scroll-cue animate-hero-fade delay-hero-5" aria-hidden="true">
+          <span className="hero-scroll-line" />
+          <span className="hero-scroll-text">Scroll</span>
         </div>
       </div>
 
-      {/* Floating Trust highlights on the right of the bottle */}
-      <div className="hero-highlights">
-        <div className="highlight-badge animate-slide-up delay-1" style={{ animationDelay: '0.5s' }}>
-          <Leaf size={22} strokeWidth={1.2} />
-          <div className="highlight-text">
-            <span className="highlight-tag">Finest</span>
-            <span className="highlight-label">Ingredients</span>
-          </div>
-        </div>
-        
-        <div className="highlight-badge animate-slide-up delay-2" style={{ animationDelay: '0.7s' }}>
-          <Compass size={22} strokeWidth={1.2} />
-          <div className="highlight-text">
-            <span className="highlight-tag">Long Lasting</span>
-            <span className="highlight-label">Scents</span>
-          </div>
-        </div>
-        
-        <div className="highlight-badge animate-slide-up delay-3" style={{ animationDelay: '0.9s' }}>
-          <Gift size={22} strokeWidth={1.2} />
-          <div className="highlight-text">
-            <span className="highlight-tag">Elegant</span>
-            <span className="highlight-label">Packaging</span>
-          </div>
-        </div>
-        
-        <div className="highlight-badge animate-slide-up delay-3" style={{ animationDelay: '1.1s' }}>
-          <Heart size={22} strokeWidth={1.2} />
-          <div className="highlight-text">
-            <span className="highlight-tag">Made With</span>
-            <span className="highlight-label">Passion</span>
-          </div>
+      {/* ── RIGHT PANEL — product showcase ── */}
+      <div className="hero-split-right">
+        {/* Blend gradient: dark left edge fades into the image */}
+        <div className="hero-split-blend" aria-hidden="true" />
+
+        {/* Product photo */}
+        <img
+          ref={imgRef}
+          src="/assets/hero_perfume_v6.jpg"
+          alt="ZENV luxury perfume bottle on marble with white jasmine flowers and amber crystal"
+          className="hero-split-img"
+        />
+
+        {/* Subtle warm vignette on edges */}
+        <div className="hero-split-vignette" aria-hidden="true" />
+
+        {/* Edition label — floating overlay */}
+        <div className="hero-edition-label animate-hero-fade delay-hero-4">
+          <span className="hero-edition-tag">New Collection</span>
+          <span className="hero-edition-name">Santal & Oud — 2025</span>
         </div>
       </div>
+
     </section>
   );
 }

@@ -23,24 +23,38 @@ export default function PromoSection() {
   };
 
   return (
-    <section id="discovery" className="section-padding" style={{ paddingBottom: '4rem' }}>
+    <section id="discovery" className="section-padding" style={{ paddingBottom: '4rem', paddingTop: '5.5rem' }}>
       <div className="container">
+        
+        {/* Discovery Sets Section Heading */}
+        <header className="os-page-header" style={{ padding: '0 0 4.5rem 0', maxWidth: 'none', margin: '0' }} aria-label="Discovery Sets Section Heading">
+          <span className="os-overline">Discovery Sets</span>
+          <div className="os-header-rule" aria-hidden="true" />
+        </header>
+
         <div className="promo-section-grid">
           
           {/* Left Promo Card - Discovery Sets */}
-          <div className="promo-banner promo-dark">
+          <div className="promo-banner promo-dark promo-discovery-redesign">
             <div className="promo-banner-content">
-              <span className="promo-banner-subtitle">Discovery Collection</span>
-              <h3 className="promo-banner-title">Find your signature scent.</h3>
+              <span className="promo-banner-subtitle">The Discovery Collection</span>
+              <h3 className="promo-banner-title">Try all five. <br />Choose your signature.</h3>
               <p className="promo-banner-desc">
-                Explore our curated sets of travel sprays and find the fragrance that's uniquely yours. Sample multiple blends on your skin before choosing a full-sized bottle.
+                Experience the complete ZENV collection in a set of luxury travel sprays. Live with each perfume on your skin before committing to a full-size flacon.
               </p>
+              
+              <ul className="promo-highlights-list">
+                <li><span>Includes 5 travel sprays (8ml each)</span></li>
+                <li><span>Get 100% redeemable credit on your next bottle</span></li>
+                <li><span>Premium soft-touch display gift box included</span></li>
+              </ul>
+
               <a 
                 href="#collection" 
-                className="promo-banner-link"
+                className="promo-banner-link premium-discovery-btn"
                 onClick={handleDiscoveryClick}
               >
-                Shop Discovery Sets <ArrowRight size={16} />
+                Shop Discovery Set <ArrowRight size={16} />
               </a>
             </div>
             <div className="promo-banner-image">

@@ -2,6 +2,21 @@ import React, { useContext, useState } from 'react';
 import { AppContext } from '../context/AppContext';
 import { X, CheckCircle, CreditCard, ShieldCheck } from 'lucide-react';
 
+const loadRazorpayScript = () => {
+  return new Promise((resolve) => {
+    if (window.Razorpay) {
+      resolve(true);
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.async = true;
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+};
+
 export default function Checkout() {
   const {
     cart,
@@ -10,55 +25,287 @@ export default function Checkout() {
     cartSavings,
     clearCart,
     isCheckoutOpen,
-    setIsCheckoutOpen
+    setIsCheckoutOpen,
+    coupons,
+    appliedCoupon,
+    setAppliedCoupon
   } = useContext(AppContext);
 
   const [formData, setFormData] = useState({
-    name: 'Yash sagar',
-    email: 'Zenv2212@gmail.com',
-    phone: '93109 12279',
-    address: '',
+    name: '',
+    email: '',
+    phone: '',
+    address1: '',
+    address2: '',
+    landmark: '',
     city: '',
     state: '',
-    zip: ''
+    pincode: ''
   });
 
   const [paymentMethod, setPaymentMethod] = useState('prepaid');
   const [orderState, setOrderState] = useState('form'); // form, success
   const [orderNumber, setOrderNumber] = useState('');
 
+  // Coupon UI States
+  const [couponInput, setCouponInput] = useState('');
+  const [couponError, setCouponError] = useState('');
+  const [couponSuccess, setCouponSuccess] = useState('');
+
+  const [isServiceable, setIsServiceable] = useState(true);
+  const [checkingServiceability, setCheckingServiceability] = useState(false);
+
   if (!isCheckoutOpen) return null;
+
+  const checkPincodeServiceability = async (pin) => {
+    if (!pin || pin.length !== 6) return;
+    setCheckingServiceability(true);
+    try {
+      const res = await fetch(`/api/serviceability?pincode=${pin}`);
+      const data = await res.json();
+      if (data && typeof data.serviceable === 'boolean') {
+        setIsServiceable(data.serviceable);
+      } else {
+        setIsServiceable(true);
+      }
+    } catch (err) {
+      console.error('Serviceability check failed:', err);
+      setIsServiceable(true); // fallback true on network error
+    } finally {
+      setCheckingServiceability(false);
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData(prev => {
+      const updated = { ...prev, [name]: value };
+      
+      if (name === 'pincode') {
+        const cleanVal = value.replace(/\D/g, '').slice(0, 6);
+        updated.pincode = cleanVal;
+        
+        if (cleanVal.length === 6 && paymentMethod === 'prepaid') {
+          checkPincodeServiceability(cleanVal);
+        } else {
+          setIsServiceable(true);
+        }
+      }
+      return updated;
+    });
   };
 
-  const handlePlaceOrder = (e) => {
+  const handlePaymentMethodChange = (method) => {
+    setPaymentMethod(method);
+    if (method === 'prepaid') {
+      if (formData.pincode.length === 6) {
+        checkPincodeServiceability(formData.pincode);
+      } else {
+        setIsServiceable(true);
+      }
+    } else {
+      setIsServiceable(true);
+    }
+  };
+
+  const handlePlaceOrder = async (e) => {
     e.preventDefault();
-    if (!formData.address || !formData.city || !formData.state || !formData.zip) {
-      alert('Please fill out all address details.');
+    if (!formData.address1 || !formData.city || !formData.state || !formData.pincode) {
+      alert('Please fill out all required address details.');
       return;
     }
 
-    // Generate simulated order number
-    const randomOrder = 'ZV-' + Math.floor(100000 + Math.random() * 900000);
-    setOrderNumber(randomOrder);
-    setOrderState('success');
+    if (paymentMethod === 'prepaid') {
+      if (!isServiceable) {
+        alert("Sorry, we currently don't deliver to this pincode.");
+        return;
+      }
+
+      const loaded = await loadRazorpayScript();
+      if (!loaded) {
+        alert('Failed to load Razorpay SDK. Please check your internet connection and try again.');
+        return;
+      }
+
+      const keyId = import.meta.env.VITE_RAZORPAY_KEY_ID;
+      if (!keyId) {
+        alert('Razorpay Key ID is not configured. Please check your environment configuration.');
+        return;
+      }
+
+      const fullAddress = `${formData.address1}${formData.address2 ? ', ' + formData.address2 : ''}${formData.landmark ? ' (Landmark: ' + formData.landmark + ')' : ''}, ${formData.city}, ${formData.state} - ${formData.pincode}`;
+      const randomOrder = 'ZV-' + Math.floor(100000 + Math.random() * 900000);
+
+      const options = {
+        key: keyId,
+        amount: getFinalPrice() * 100, // Amount in paise
+        currency: 'INR',
+        name: 'ZENV',
+        description: 'Luxury Fragrance Order',
+        image: '/assets/discovery_set.png',
+        handler: function (response) {
+          setOrderNumber(randomOrder);
+          setOrderState('success');
+        },
+        prefill: {
+          name: formData.name,
+          email: formData.email,
+          contact: formData.phone
+        },
+        notes: {
+          order_reference: randomOrder,
+          name: formData.name.substring(0, 255),
+          email: formData.email.substring(0, 255),
+          phone: formData.phone.substring(0, 50),
+          address: fullAddress.substring(0, 255),
+          pincode: formData.pincode.substring(0, 10),
+          city: formData.city.substring(0, 100),
+          state: formData.state.substring(0, 100),
+          items: cart.map(item => `${item.name} (${item.size}) x ${item.quantity}`).join(', ').substring(0, 255),
+          itemDetails: cart.map(item => `${item.name}|${item.size}|${item.quantity}|${item.price}`).join(';').substring(0, 255),
+          coupon_code: appliedCoupon ? appliedCoupon.code : '',
+          discount_amount: String(getCouponDiscount())
+        },
+        theme: {
+          color: '#B38E34' // matches --color-gold-deep
+        }
+      };
+
+      try {
+        const rzp = new window.Razorpay(options);
+        rzp.open();
+      } catch (err) {
+        console.error('Razorpay initialization failed:', err);
+        alert('Could not initialize payment window. Please try again.');
+      }
+    } else {
+      // COD flow
+      const randomOrder = 'ZV-' + Math.floor(100000 + Math.random() * 900000);
+      setOrderNumber(randomOrder);
+      
+      const fullAddress = `${formData.address1}${formData.address2 ? ', ' + formData.address2 : ''}${formData.landmark ? ' (Landmark: ' + formData.landmark + ')' : ''}, ${formData.city}, ${formData.state} - ${formData.pincode}`;
+
+      // Notify the server about COD order so emails are dispatched
+      try {
+        fetch('/api/cod-order', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            order_reference: randomOrder,
+            name: formData.name,
+            email: formData.email,
+            phone: formData.phone,
+            address: fullAddress,
+            pincode: formData.pincode,
+            city: formData.city,
+            state: formData.state,
+            items: cart.map(item => `${item.name} (${item.size}) x ${item.quantity}`).join(', '),
+            itemDetails: cart.map(item => `${item.name}|${item.size}|${item.quantity}|${item.price}`).join(';'),
+            amount: getFinalPrice(),
+            coupon_code: appliedCoupon ? appliedCoupon.code : '',
+            discount_amount: getCouponDiscount()
+          })
+        }).catch(err => {
+          console.error('Failed executing COD order notification POST:', err);
+        });
+      } catch (err) {
+        console.error('Failed to notify server about COD order:', err);
+      }
+
+      setOrderState('success');
+
+      // Construct WhatsApp message
+      const itemsList = cart.map(item => `- ${item.name} (${item.size}) x ${item.quantity} - ₹${(paymentMethod === 'prepaid' ? item.price : item.mrp) * item.quantity}`).join('\n');
+      
+      const couponWaSection = appliedCoupon 
+        ? `\n*Coupon Applied:* ${appliedCoupon.code} (-₹${getCouponDiscount()})\n`
+        : '';
+      
+      const whatsappMessage = `📦 *NEW COD ORDER CONFIRMATION* 📦\n\n` +
+        `*Order Reference:* ${randomOrder}\n` +
+        `*Customer Name:* ${formData.name}\n` +
+        `*Customer Phone:* ${formData.phone}\n` +
+        `${formData.email ? '*Email:* ' + formData.email + '\n' : ''}\n` +
+        `*Shipping Destination:*\n` +
+        `Address Line 1: ${formData.address1}\n` +
+        `${formData.address2 ? 'Address Line 2: ' + formData.address2 + '\n' : ''}` +
+        `${formData.landmark ? 'Landmark: ' + formData.landmark + '\n' : ''}` +
+        `City: ${formData.city}\n` +
+        `State: ${formData.state}\n` +
+        `Pincode: ${formData.pincode}\n\n` +
+        `*Order Summary:*\n${itemsList}\n${couponWaSection}\n` +
+        `*Total Amount:* ₹${getFinalPrice()}\n` +
+        `*Payment Method:* Cash on Delivery (COD)`;
+
+      const waUrl = `https://wa.me/919310912279?text=${encodeURIComponent(whatsappMessage)}`;
+      window.open(waUrl, '_blank');
+    }
   };
 
   const handleSuccessClose = () => {
     clearCart();
+    setAppliedCoupon(null);
     setOrderState('form');
     setIsCheckoutOpen(false);
   };
 
-  const getFinalPrice = () => {
-    if (paymentMethod === 'prepaid') {
-      return cartSubtotal;
+  const getCouponDiscount = () => {
+    if (!appliedCoupon) return 0;
+    const base = paymentMethod === 'prepaid' ? cartSubtotal : cartMRPTotal;
+    let discount = 0;
+    if (appliedCoupon.type === 'percentage') {
+      discount = Math.round((base * appliedCoupon.value) / 100);
+    } else {
+      discount = appliedCoupon.value;
     }
-    // If COD, charge original MRP as launch offer states: "on prepaid orders only"
-    return cartMRPTotal;
+    return Math.min(discount, base);
+  };
+
+  const getFinalPrice = () => {
+    const base = paymentMethod === 'prepaid' ? cartSubtotal : cartMRPTotal;
+    const discount = getCouponDiscount();
+    return Math.max(0, base - discount);
+  };
+
+  const handleApplyCoupon = (e) => {
+    e.preventDefault();
+    setCouponError('');
+    setCouponSuccess('');
+
+    const trimmedInput = couponInput.trim().toUpperCase();
+    if (!trimmedInput) {
+      setCouponError('Please enter a coupon code.');
+      return;
+    }
+
+    const coupon = coupons.find(c => c.code === trimmedInput);
+
+    if (!coupon) {
+      setCouponError('Invalid coupon code.');
+      return;
+    }
+
+    if (!coupon.isActive) {
+      setCouponError('This coupon is no longer active.');
+      return;
+    }
+
+    if (cartSubtotal < coupon.minSubtotal) {
+      setCouponError(`Minimum purchase of ₹${coupon.minSubtotal} required for this coupon.`);
+      return;
+    }
+
+    setAppliedCoupon(coupon);
+    setCouponSuccess(`Coupon "${coupon.code}" applied successfully!`);
+    setCouponInput('');
+  };
+
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponError('');
+    setCouponSuccess('');
   };
 
   return (
@@ -122,15 +369,37 @@ export default function Checkout() {
 
               <h3 className="checkout-section-header" style={{ marginTop: '2rem' }}>2. Delivery Address</h3>
               <div className="form-group">
-                <label className="form-label">Street Address</label>
+                <label className="form-label">Address Line 1</label>
                 <input 
                   type="text" 
-                  name="address" 
+                  name="address1" 
                   className="form-input" 
                   placeholder="Apartment, suite, unit, building, street"
-                  value={formData.address} 
+                  value={formData.address1} 
                   onChange={handleInputChange} 
                   required 
+                />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Address Line 2 (Optional)</label>
+                <input 
+                  type="text" 
+                  name="address2" 
+                  className="form-input" 
+                  placeholder="Area, colony, road, sector"
+                  value={formData.address2} 
+                  onChange={handleInputChange} 
+                />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Landmark (Optional but recommended)</label>
+                <input 
+                  type="text" 
+                  name="landmark" 
+                  className="form-input" 
+                  placeholder="E.g. Near metro station, opposite park"
+                  value={formData.landmark} 
+                  onChange={handleInputChange} 
                 />
               </div>
               <div className="form-group-row">
@@ -158,15 +427,26 @@ export default function Checkout() {
                 </div>
               </div>
               <div className="form-group">
-                <label className="form-label">ZIP / Postal Code</label>
+                <label className="form-label">Pincode</label>
                 <input 
                   type="text" 
-                  name="zip" 
+                  name="pincode" 
                   className="form-input" 
-                  value={formData.zip} 
+                  placeholder="6-digit PIN code"
+                  value={formData.pincode} 
                   onChange={handleInputChange} 
                   required 
                 />
+                {checkingServiceability && (
+                  <div style={{ fontSize: '0.75rem', color: '#B38E34', marginTop: '0.25rem' }}>
+                    Checking serviceability with Delhivery...
+                  </div>
+                )}
+                {!isServiceable && paymentMethod === 'prepaid' && (
+                  <div style={{ fontSize: '0.75rem', color: '#d32f2f', marginTop: '0.25rem', fontWeight: '500' }}>
+                    Sorry, we currently don't deliver to this pincode.
+                  </div>
+                )}
               </div>
 
               <h3 className="checkout-section-header" style={{ marginTop: '2rem' }}>3. Payment Method</h3>
@@ -174,7 +454,7 @@ export default function Checkout() {
                 
                 <div 
                   className={`payment-method-option ${paymentMethod === 'prepaid' ? 'selected' : ''}`}
-                  onClick={() => setPaymentMethod('prepaid')}
+                  onClick={() => handlePaymentMethodChange('prepaid')}
                 >
                   <div className="payment-radio">
                     {paymentMethod === 'prepaid' && <div className="payment-radio-inner" />}
@@ -189,7 +469,7 @@ export default function Checkout() {
 
                 <div 
                   className={`payment-method-option ${paymentMethod === 'cod' ? 'selected' : ''}`}
-                  onClick={() => setPaymentMethod('cod')}
+                  onClick={() => handlePaymentMethodChange('cod')}
                 >
                   <div className="payment-radio">
                     {paymentMethod === 'cod' && <div className="payment-radio-inner" />}
@@ -204,7 +484,17 @@ export default function Checkout() {
 
               </div>
 
-              <button type="submit" className="btn-primary" style={{ width: '100%', padding: '1.2rem' }}>
+              <button 
+                type="submit" 
+                className="btn-primary" 
+                style={{ 
+                  width: '100%', 
+                  padding: '1.2rem',
+                  backgroundColor: (!isServiceable && paymentMethod === 'prepaid') ? '#8c8c8c' : '', 
+                  cursor: (!isServiceable && paymentMethod === 'prepaid') ? 'not-allowed' : 'pointer'
+                }}
+                disabled={!isServiceable && paymentMethod === 'prepaid'}
+              >
                 Place Order — ₹{getFinalPrice()}
               </button>
             </form>
@@ -231,6 +521,67 @@ export default function Checkout() {
                 ))}
               </div>
 
+              {/* Coupon Code Input */}
+              <div className="checkout-coupon-container" style={{ margin: '1.5rem 0 2rem', paddingBottom: '1.5rem', borderBottom: '1px solid var(--border-light)' }}>
+                {!appliedCoupon ? (
+                  <form onSubmit={handleApplyCoupon} style={{ display: 'flex', gap: '0.5rem', flexDirection: 'column' }}>
+                    <label className="form-label" style={{ fontSize: '0.7rem', color: 'var(--color-charcoal-medium)' }}>Have a Coupon Code?</label>
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <input
+                        type="text"
+                        className="form-input"
+                        placeholder="ENTER COUPON CODE"
+                        value={couponInput}
+                        onChange={(e) => {
+                          setCouponInput(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''));
+                          setCouponError('');
+                        }}
+                        style={{ textTransform: 'uppercase', flexGrow: 1, padding: '0.6rem 0.8rem', fontSize: '0.85rem' }}
+                      />
+                      <button
+                        type="submit"
+                        className="btn-primary"
+                        style={{ padding: '0.6rem 1.2rem', fontSize: '0.8rem', width: 'auto', background: 'var(--color-charcoal)', borderColor: 'var(--color-charcoal)' }}
+                      >
+                        Apply
+                      </button>
+                    </div>
+                    {couponError && (
+                      <div style={{ fontSize: '0.75rem', color: '#c62828', marginTop: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                        <span>⚠️</span> {couponError}
+                      </div>
+                    )}
+                  </form>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                    <span className="form-label" style={{ fontSize: '0.7rem', color: 'var(--color-charcoal-medium)' }}>Applied Coupon</span>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--bg-white)', border: '1px solid #bbf7d0', padding: '0.5rem 0.8rem', borderRadius: '4px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexGrow: 1 }}>
+                        <span style={{ fontSize: '1rem' }}>🎉</span>
+                        <div>
+                          <strong style={{ fontSize: '0.85rem', color: '#166534', fontFamily: 'monospace' }}>{appliedCoupon.code}</strong>
+                          <div style={{ fontSize: '0.7rem', color: '#15803d' }}>
+                            {appliedCoupon.type === 'percentage' ? `${appliedCoupon.value}% discount applied` : `₹${appliedCoupon.value} discount applied`}
+                          </div>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleRemoveCoupon}
+                        style={{ background: 'none', border: 'none', color: '#c62828', fontSize: '0.75rem', fontWeight: '600', cursor: 'pointer', textDecoration: 'underline', padding: '0.2rem' }}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                    {couponSuccess && (
+                      <div style={{ fontSize: '0.72rem', color: '#15803d', marginTop: '0.1rem' }}>
+                        {couponSuccess}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
               <div style={{ marginTop: 'auto' }}>
                 <div className="summary-row">
                   <span>Items Subtotal</span>
@@ -241,6 +592,13 @@ export default function Checkout() {
                   <div className="summary-row summary-savings">
                     <span>Founder Launch Discount</span>
                     <span>- ₹{cartSavings}</span>
+                  </div>
+                )}
+
+                {appliedCoupon && getCouponDiscount() > 0 && (
+                  <div className="summary-row" style={{ color: '#c62828', fontWeight: 500 }}>
+                    <span>Coupon Discount ({appliedCoupon.code})</span>
+                    <span>- ₹{getCouponDiscount()}</span>
                   </div>
                 )}
 
@@ -293,7 +651,7 @@ export default function Checkout() {
               <div className="success-detail-row">
                 <span className="success-detail-label">Shipping Destination</span>
                 <span className="success-detail-value" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '200px' }}>
-                  {formData.address}, {formData.city}
+                  {formData.address1}, {formData.city}
                 </span>
               </div>
             </div>

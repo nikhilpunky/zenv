@@ -14,6 +14,8 @@ export default function Header() {
   } = useContext(AppContext);
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [barDismissed, setBarDismissed] = useState(false);
+  const [barBtnPressed, setBarBtnPressed] = useState(false);
 
   const handleScrollToSection = (sectionId) => {
     setIsMobileMenuOpen(false);
@@ -23,12 +25,61 @@ export default function Header() {
     }
   };
 
+  const handleBarClaim = () => {
+    setBarBtnPressed(true);
+    setTimeout(() => {
+      setBarBtnPressed(false);
+      document.getElementById('collection')?.scrollIntoView({ behavior: 'smooth' });
+    }, 140);
+  };
+
   return (
     <>
-      {/* Announcement Bar */}
-      <div className="announcement-bar">
-        FOUNDER'S LAUNCH OFFER: SPECIAL PRICING FOR A LIMITED TIME | FREE SHIPPING ON ALL PREPAID ORDERS
-      </div>
+      {/* Premium Announcement Bar */}
+      {!barDismissed && (
+        <div className="announcement-bar-premium" role="banner">
+          {/* Marquee track */}
+          <div className="annbar-marquee-wrapper" aria-hidden="true">
+            <div className="annbar-marquee-track">
+              {[...Array(6)].map((_, i) => (
+                <span key={i} className="annbar-marquee-item">
+                  <svg className="annbar-gift-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="20 12 20 22 4 22 4 12" />
+                    <rect x="2" y="7" width="20" height="5" />
+                    <line x1="12" y1="22" x2="12" y2="7" />
+                    <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z" />
+                    <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z" />
+                  </svg>
+                  PRE-LAUNCH OFFER FOR THE FIRST 100 CUSTOMERS
+                  <span className="annbar-dot">✦</span>
+                  EXCLUSIVE DISCOUNTS &amp; EARLY ACCESS
+                  <span className="annbar-dot">✦</span>
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Right-side CTA */}
+          <div className="annbar-right">
+            <button
+              id="annbar-claim-btn"
+              className={`annbar-cta-btn${barBtnPressed ? ' annbar-cta-btn--pressed' : ''}`}
+              onClick={handleBarClaim}
+              aria-label="Claim exclusive pre-launch offer"
+            >
+              <span className="annbar-cta-shimmer" aria-hidden="true" />
+              <span className="annbar-cta-text">Claim Offer Now</span>
+            </button>
+            <button
+              className="annbar-dismiss-btn"
+              onClick={() => setBarDismissed(true)}
+              aria-label="Dismiss announcement"
+            >
+              <X size={14} strokeWidth={1.5} />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Main Sticky Header */}
       <header className="navbar-header">
@@ -134,7 +185,7 @@ export default function Header() {
       {isMobileMenuOpen && (
         <div className="mobile-nav-overlay" onClick={() => setIsMobileMenuOpen(false)}>
           <div 
-            className={`mobile-nav-panel ${isMobileMenuOpen ? 'open' : ''}`}
+            className="mobile-nav-panel open"
             onClick={(e) => e.stopPropagation()}
           >
             <button 

@@ -100,7 +100,7 @@ export default function FragranceFinder() {
     }
     
     if (profile === 'musky') {
-      return products.find(p => p.id === 'ambre-soleil') || products[5];
+      return products.find(p => p.id === 'zenv-dark') || products[5];
     }
 
     // Fallback default

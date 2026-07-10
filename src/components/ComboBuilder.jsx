@@ -13,7 +13,7 @@ export default function ComboBuilder() {
     COMBO_50ML_2X: {
       id: 'combo-50ml-2x',
       name: '2 × 50ml Combo',
-      price: 1999,
+      price: 1799,
       mrp: 4998,
       limit: 2,
       description: 'Choose any two 50ml signature Eau de Parfums of your choice.'
@@ -21,7 +21,7 @@ export default function ComboBuilder() {
     COMBO_DISC_50ML: {
       id: 'combo-disc-50ml',
       name: 'Discovery + 50ml Combo',
-      price: 1599,
+      price: 1499,
       mrp: 3998,
       limit: 1,
       description: 'Receive 1 × Discovery Set plus any one 50ml Eau de Parfum.'
@@ -179,8 +179,8 @@ export default function ComboBuilder() {
                 onClick={() => handlePackageChange(PACKAGES.COMBO_50ML_2X)}
               >
                 <div className="combo-pkg-name">2 × 50ml Combo</div>
-                <div className="combo-pkg-price">₹1,999</div>
-                <div className="combo-pkg-savings">Save ₹2,999 (MRP ₹4,998)</div>
+                <div className="combo-pkg-price">₹1,799</div>
+                <div className="combo-pkg-savings">Save ₹3,199 (MRP ₹4,998)</div>
               </div>
 
               <div 
@@ -188,8 +188,8 @@ export default function ComboBuilder() {
                 onClick={() => handlePackageChange(PACKAGES.COMBO_DISC_50ML)}
               >
                 <div className="combo-pkg-name">Discovery + 50ml</div>
-                <div className="combo-pkg-price">₹1,599</div>
-                <div className="combo-pkg-savings">Save ₹2,399 (MRP ₹3,998)</div>
+                <div className="combo-pkg-price">₹1,499</div>
+                <div className="combo-pkg-savings">Save ₹2,499 (MRP ₹3,998)</div>
               </div>
 
             </div>
