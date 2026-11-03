@@ -47,7 +47,7 @@ export default function PreLaunchPopup() {
       onClick={handleOverlayClick}
       role="dialog"
       aria-modal="true"
-      aria-label="Welcome to ZENV"
+      aria-label="Welcome to VESPERA"
     >
       <div className={`popup-card${animateIn ? ' popup-card--visible' : ''}`}>
 
@@ -92,10 +92,10 @@ export default function PreLaunchPopup() {
         {/* Headline — stagger delay 2 */}
         <div className={`popup-headline-block popup-anim${animateIn ? ' popup-anim--in' : ''}`}
           style={{ '--popup-delay': '0.28s' }}>
-          <h2 className="popup-headline">Welcome to ZENV</h2>
+          <h2 className="popup-headline">Welcome to VESPERA</h2>
           <div className="popup-gold-rule" aria-hidden="true" />
           <p className="popup-subline">
-            Discover our signature fragrance collection<br />crafted to leave a lasting impression.
+            Experience our premium olfactive catalog<br />in this fully interactive demo environment.
           </p>
         </div>
 
@@ -108,8 +108,8 @@ export default function PreLaunchPopup() {
             <path d="M13 11c-2 2-4 5-6 7" />
           </svg>
           <p className="popup-founders-text">
-            <em className="popup-founders-accent">Exclusive Founder's Launch –</em><br />
-            Limited benefits for our first 100 customers.
+            <em className="popup-founders-accent">Interactive Showcase –</em><br />
+            Simulate prepaid payments & check out mock deliveries.
           </p>
         </div>
 
@@ -119,10 +119,10 @@ export default function PreLaunchPopup() {
           className={`popup-cta-btn popup-anim${animateIn ? ' popup-anim--in' : ''}${btnPressed ? ' popup-cta-btn--pressed' : ''}`}
           style={{ '--popup-delay': '0.52s' }}
           onClick={handleExploreClick}
-          aria-label="Explore the ZENV fragrance collection"
+          aria-label="Explore the VESPERA fragrance collection"
         >
           <span className="popup-cta-shimmer" aria-hidden="true" />
-          <span className="popup-cta-text">Explore Collection</span>
+          <span className="popup-cta-text">Explore Demo</span>
           <span className="popup-cta-arrow" aria-hidden="true">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="5" y1="12" x2="19" y2="12" />

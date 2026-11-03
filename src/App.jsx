@@ -8,6 +8,7 @@ import ProductGrid from './components/ProductGrid';
 import PromoSection from './components/PromoSection';
 import ComboBuilder from './components/ComboBuilder';
 import Story from './components/Story';
+import FeaturedSections from './components/FeaturedSections';
 import Footer from './components/Footer';
 import CartDrawer from './components/CartDrawer';
 import Checkout from './components/Checkout';
@@ -17,51 +18,33 @@ import LegalPages from './components/LegalPages';
 import PreLaunchPopup from './components/PreLaunchPopup';
 import AdminDashboard from './components/AdminDashboard';
 import WhatsAppButton from './components/WhatsAppButton';
+import ServicesPage from './components/ServicesPage';
 
 
 function AppContent() {
   const { isAdminMode, setIsAdminMode, isAdminAuthenticated } = useContext(AppContext);
 
   useEffect(() => {
-    // Hidden entry URL trigger: mixed, long words to hide direct admin access
-    const secret = 'zenv-secure-portal-auth-gateway-admin-dashboard-2026';
-    const path = window.location.pathname;
-    const search = window.location.search;
-    const hash = window.location.hash;
+    const secret = 'vespera-control-x9k2p-admin';
+    const checkAdminPath = () => {
+      const path = window.location.pathname;
+      const search = window.location.search;
+      const hash = window.location.hash;
 
-    if (
-      path === `/${secret}` || 
-      path.includes(secret) || 
-      search.includes(secret) || 
-      hash.includes(secret)
-    ) {
-      setIsAdminMode(true);
-      // Clean URL if we are already authenticated
-      if (sessionStorage.getItem('zenv_admin_logged_in') === 'true') {
-        window.history.replaceState(null, '', window.location.origin);
-      }
-    }
-  }, [setIsAdminMode]);
+      const isSecret = 
+        path === `/${secret}` || 
+        path.endsWith(`/${secret}`) || 
+        search.includes(secret) || 
+        hash.includes(secret);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('revealed');
-          }
-        });
-      },
-      { threshold: 0.15 }
-    );
-
-    const elements = document.querySelectorAll('.reveal-on-scroll');
-    elements.forEach((el) => observer.observe(el));
-
-    return () => {
-      elements.forEach((el) => observer.unobserve(el));
+      setIsAdminMode(isSecret);
     };
-  }, [isAdminMode]); // Re-observe elements if switching view modes
+
+    checkAdminPath();
+
+    window.addEventListener('popstate', checkAdminPath);
+    return () => window.removeEventListener('popstate', checkAdminPath);
+  }, [setIsAdminMode]);
 
   if (isAdminMode) {
     return <AdminDashboard />;
@@ -77,34 +60,25 @@ function AppContent() {
         <Hero />
 
         {/* Categories Bar */}
-        <div className="reveal-on-scroll">
-          <CategoryNav />
-        </div>
+        <CategoryNav />
 
         {/* Dynamic Product Grid */}
-        <div className="reveal-on-scroll">
-          <ProductGrid />
-        </div>
+        <ProductGrid />
 
-        {/* Why Choose ZENV? — Brand Feature Highlights */}
-        <div className="reveal-on-scroll">
-          <Highlights />
-        </div>
+        {/* Dynamic Featured Hero, Best Sellers, and Special Offers */}
+        <FeaturedSections />
+
+        {/* Why Choose VESPERA? — Brand Feature Highlights */}
+        <Highlights />
 
         {/* Promotional Collections Grid */}
-        <div className="reveal-on-scroll">
-          <PromoSection />
-        </div>
+        <PromoSection />
 
         {/* Interactive Custom Combo Builder */}
-        <div className="reveal-on-scroll">
-          <ComboBuilder />
-        </div>
+        <ComboBuilder />
 
         {/* Brand Narrative, Heritage, Mission & Review Highlights */}
-        <div className="reveal-on-scroll">
-          <Story />
-        </div>
+        <Story />
       </main>
 
       {/* Trust & Guarantee Values bar */}
@@ -160,6 +134,7 @@ function AppContent() {
       <CartDrawer />
       <Checkout />
       <FragranceFinder />
+      <ServicesPage />
       <ProductQuickView />
       <LegalPages />
       <PreLaunchPopup />

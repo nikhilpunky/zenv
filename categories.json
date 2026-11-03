@@ -1,0 +1,32 @@
+[
+  {
+    "id": "women",
+    "label": "Women's Perfumes",
+    "image": "/assets/product_pure.jpg",
+    "icon": "Sparkles"
+  },
+  {
+    "id": "men",
+    "label": "Men's Perfumes",
+    "image": "/assets/product_wood.jpg",
+    "icon": "Compass"
+  },
+  {
+    "id": "unisex",
+    "label": "Unisex Fragrances",
+    "image": "/assets/product_blue.jpg",
+    "icon": "Layers"
+  },
+  {
+    "id": "discovery",
+    "label": "Discovery Sets",
+    "image": "/assets/discovery_set.png",
+    "icon": "Grid"
+  },
+  {
+    "id": "oils",
+    "label": "Perfume Oils",
+    "image": "/assets/product_dark.jpg",
+    "icon": "Droplet"
+  }
+]

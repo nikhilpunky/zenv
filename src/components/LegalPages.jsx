@@ -15,7 +15,7 @@ export default function LegalPages() {
             <h2 className="legal-title">Privacy Policy</h2>
             <div className="legal-content">
               <p><strong>Effective Date: June 27, 2026</strong></p>
-              <p>At ZENV, we value the trust you place in us when sharing your personal information. This Privacy Policy details how we collect, use, and safeguard your data during your shopping experience.</p>
+              <p>At VESPERA, we value the trust you place in us when sharing your personal information. This Privacy Policy details how we collect, use, and safeguard your data during your shopping experience.</p>
               
               <h3>1. Information We Collect</h3>
               <p>We collect details you provide directly, including your name, email address, phone number, shipping address, and payment preferences during checkout or subscription.</p>
@@ -24,7 +24,7 @@ export default function LegalPages() {
               <p>Your details are used solely to process orders, send delivery updates via WhatsApp/Email, respond to client service requests, and send newsletter updates if you opt in. We do not sell or trade your details to third parties.</p>
               
               <h3>3. Payment and Security</h3>
-              <p>Transactions are processed via secure, encrypted channels. We do not store credit/debit card numbers on our servers. For support or privacy questions, contact us at <strong>Zenv2212@gmail.com</strong>.</p>
+              <p>Transactions are processed via secure, encrypted channels. We do not store credit/debit card numbers on our servers. For support or privacy questions, contact us at <strong>vesperaparfums@gmail.com</strong>.</p>
             </div>
           </>
         );
@@ -34,7 +34,7 @@ export default function LegalPages() {
             <h2 className="legal-title">Terms of Service</h2>
             <div className="legal-content">
               <p><strong>Effective Date: June 27, 2026</strong></p>
-              <p>Welcome to ZENV ("we", "our", "ZENV"). By browsing or purchasing from our store, you agree to comply with the terms and conditions outlined below.</p>
+              <p>Welcome to VESPERA ("we", "our", "VESPERA"). By browsing or purchasing from our store, you agree to comply with the terms and conditions outlined below.</p>
               
               <h3>1. Order Acceptance & Pricing</h3>
               <p>Prices displayed are in INR. We reserve the right to modify pricing, special combinations, and launch collections at any time without prior notice. Once the first 100 prepaid launch orders are fulfilled, standard pricing will apply.</p>
@@ -43,7 +43,7 @@ export default function LegalPages() {
               <p>Launch pricing (e.g. ₹799 for Discovery Collection, ₹1,199 for 50ml, ₹1,999 for 2x50ml combo) is strictly applicable to prepaid transactions. Cash on delivery options are subject to review or cancellation at our discretion.</p>
               
               <h3>3. User Conduct</h3>
-              <p>Users must not reproduce, duplicate, copy, or exploit any portion of the service, designs, photography, or copy on this website without explicit written consent from ZENV Parfums.</p>
+              <p>Users must not reproduce, duplicate, copy, or exploit any portion of the service, designs, photography, or copy on this website without explicit written consent from Vespera Parfums.</p>
             </div>
           </>
         );
@@ -62,7 +62,7 @@ export default function LegalPages() {
               <p>Sealed items must be returned within 14 days of delivery. Used, sprayed, or opened bottles cannot be returned or refunded. Shipping fees for returns are the responsibility of the customer unless the product arrived damaged.</p>
               
               <h3>3. Damaged or Defective Deliveries</h3>
-              <p>If your package arrives leaking, broken, or defective, contact us immediately at <strong>Zenv2212@gmail.com</strong> or WhatsApp <strong>+91 93109 12279</strong> with unpacking video proof to request a complimentary replacement.</p>
+              <p>If your package arrives leaking, broken, or defective, contact us immediately at <strong>vesperaparfums@gmail.com</strong> or WhatsApp <strong>+91 93109 12279</strong> with unpacking video proof to request a complimentary replacement.</p>
             </div>
           </>
         );
@@ -72,16 +72,16 @@ export default function LegalPages() {
             <h2 className="legal-title">Disclaimer</h2>
             <div className="legal-content">
               <p><strong>Effective Date: June 27, 2026</strong></p>
-              <p>The information and products provided by ZENV Parfums are subject to the following disclaimer conditions.</p>
+              <p>The information and products provided by Vespera Parfums are subject to the following disclaimer conditions.</p>
               
               <h3>1. Formulation & Allergens</h3>
-              <p>ZENV fragrances are created using premium synthetic and natural perfumery compounds. Everyone's skin chemistry is unique. Certain ingredients may cause minor irritation or allergies in sensitive individuals.</p>
+              <p>VESPERA fragrances are created using premium synthetic and natural perfumery compounds. Everyone's skin chemistry is unique. Certain ingredients may cause minor irritation or allergies in sensitive individuals.</p>
               
               <h3>2. Recommended Usage & Patch Test</h3>
               <p>We strongly recommend performing a small patch test on your wrist or inner elbow and waiting 24 hours before applying the perfume fully. Discontinue use immediately if redness, itching, or irritation occurs. Avoid direct contact with eyes.</p>
               
               <h3>3. Brand Representations</h3>
-              <p>ZENV is an independent luxury fragrance developer. Any references to specific fragrance notes, olfactory categories, or moods are representations for marketing purposes and do not guarantee specific psychological or physical effects.</p>
+              <p>VESPERA is an independent luxury fragrance developer. Any references to specific fragrance notes, olfactory categories, or moods are representations for marketing purposes and do not guarantee specific psychological or physical effects.</p>
             </div>
           </>
         );

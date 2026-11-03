@@ -3,7 +3,8 @@ import { AppContext } from '../context/AppContext';
 import { ArrowRight } from 'lucide-react';
 
 export default function PromoSection() {
-  const { setActiveCategory } = useContext(AppContext);
+  const { setActiveCategory, products } = useContext(AppContext);
+  const discoveryProd = Array.isArray(products) ? products.find(p => p.isDiscovery || p.id === 'discovery-set' || p.category === 'discovery') : null;
 
   const handleDiscoveryClick = (e) => {
     e.preventDefault();
@@ -28,7 +29,7 @@ export default function PromoSection() {
         
         {/* Discovery Sets Section Heading */}
         <header className="os-page-header" style={{ padding: '0 0 4.5rem 0', maxWidth: 'none', margin: '0' }} aria-label="Discovery Sets Section Heading">
-          <span className="os-overline">Discovery Sets</span>
+          <span className="os-overline">{discoveryProd?.type || "Discovery Sets"}</span>
           <div className="os-header-rule" aria-hidden="true" />
         </header>
 
@@ -37,10 +38,10 @@ export default function PromoSection() {
           {/* Left Promo Card - Discovery Sets */}
           <div className="promo-banner promo-dark promo-discovery-redesign">
             <div className="promo-banner-content">
-              <span className="promo-banner-subtitle">The Discovery Collection</span>
+              <span className="promo-banner-subtitle">{discoveryProd?.name || "The Discovery Collection"}</span>
               <h3 className="promo-banner-title">Try all five. <br />Choose your signature.</h3>
               <p className="promo-banner-desc">
-                Experience the complete ZENV collection in a set of luxury travel sprays. Live with each perfume on your skin before committing to a full-size flacon.
+                {discoveryProd?.description || "Experience the complete VESPERA collection in a set of luxury travel sprays. Live with each perfume on your skin before committing to a full-size flacon."}
               </p>
               
               <ul className="promo-highlights-list">
@@ -59,8 +60,8 @@ export default function PromoSection() {
             </div>
             <div className="promo-banner-image">
               <img 
-                src="/assets/discovery_set.png" 
-                alt="ZENV Luxury Perfume Discovery Vials Set" 
+                src={discoveryProd?.images?.[0] || discoveryProd?.image || "/assets/discovery_set.png"} 
+                alt={discoveryProd?.name || "VESPERA Luxury Perfume Discovery Vials Set"} 
                 className="promo-banner-img"
               />
             </div>
@@ -85,7 +86,7 @@ export default function PromoSection() {
             <div className="promo-banner-image">
               <img 
                 src="/assets/gifting_set.png" 
-                alt="ZENV Champagne Gold Gift Package" 
+                alt="VESPERA Champagne Gold Gift Package" 
                 className="promo-banner-img"
               />
             </div>

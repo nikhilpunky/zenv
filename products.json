@@ -1,0 +1,141 @@
+[
+  {
+    "id": "discovery-set",
+    "name": "Discovery Collection",
+    "type": "Discovery Sets",
+    "size": "5 × 8ml",
+    "mrp": 1499,
+    "price": 799,
+    "image": "/assets/discovery_set.png",
+    "certImage": "/assets/product_discovery_infographic.jpg",
+    "notes": "Rose · Sandalwood · Citrus · Oud · Amber",
+    "category": "discovery",
+    "isDiscovery": true,
+    "description": "A curated collection of five signature fragrances (8ml each) designed to help you experience VESPERA and discover your perfect signature scent.",
+    "longDescription": "Our Discovery Collection is the perfect introduction to the world of VESPERA. It contains five premium travel-sized spray vials (8ml each), allowing you to wear and test each fragrance on your skin before choosing a full 50ml bottle. Packaged in a luxury matte black presentation box.",
+    "olfactiveNotes": {
+      "top": "Various (Floral, Woody, Citrus, Smoky)",
+      "heart": "Various (Jasmine, Iris, Patchouli, Amber)",
+      "base": "Various (Musk, Sandalwood, Leather, Cedar)"
+    },
+    "longevity": "8+ Hours",
+    "projection": "Moderate to Strong",
+    "occasion": "Daily Discovery & Gifting",
+    "howToUse": "Spritz on pulse points (wrists, neck, and behind ears). Wear them individually or layer them to create your own signature scent blend."
+  },
+  {
+    "id": "vespera-blue",
+    "name": "VESPERA Blue",
+    "type": "Eau de Parfum",
+    "size": "50ml",
+    "mrp": 2499,
+    "price": 1199,
+    "image": "/assets/product_blue.jpg",
+    "certImage": "/assets/product_blue_infographic.jpg",
+    "notes": "Aqua · Lime · Jasmine",
+    "category": "unisex",
+    "description": "A vibrant, fresh aquatic signature bursting with crisp lime, cool aqua notes, and delicate jasmine blossoms.",
+    "longDescription": "VESPERA Blue is a bold, invigorating journey into freshness. It opens with a sparkling burst of zesty lime and crisp aquatic accords, transitioning into a heart of fresh jasmine and clean white florals. The base settles into cool musk and cedarwood — energetic, clean, and undeniably modern.",
+    "olfactiveNotes": {
+      "top": "Lime, Aquatic Accord, Bergamot",
+      "heart": "Jasmine, White Flowers, Green Leaves",
+      "base": "Cool Musk, Cedarwood, Amberwood"
+    },
+    "longevity": "8-10 Hours",
+    "projection": "Moderate to Strong",
+    "occasion": "Daily Wear, Office & Outdoor Activities",
+    "howToUse": "Spray 2-3 times on pulse points — wrists, neck, and collarbones. Ideal after a shower for a long-lasting, refreshing projection throughout the day."
+  },
+  {
+    "id": "vespera-wood",
+    "name": "VESPERA Wood",
+    "type": "Eau de Parfum",
+    "size": "50ml",
+    "mrp": 2499,
+    "price": 1199,
+    "image": "/assets/product_wood.jpg",
+    "certImage": "/assets/product_wood_infographic.jpg",
+    "notes": "Sandalwood · Amber · Cedar",
+    "category": "women",
+    "description": "A deep, warm woody signature crafted from rich sandalwood, golden amber, and smooth cedarwood for an enduring presence.",
+    "longDescription": "VESPERA Wood is an ode to the warmth of ancient forests. It opens with a spiced, golden accord of cardamom and cinnamon, leading into a heart of creamy Australian sandalwood and smooth cedar. The dry-down reveals a rich, resinous amber that clings to skin for hours — sophisticated, bold, and deeply comforting.",
+    "olfactiveNotes": {
+      "top": "Cardamom, Cinnamon, Black Pepper",
+      "heart": "Australian Sandalwood, Cedarwood, Vetiver",
+      "base": "Golden Amber, Musk, Leather"
+    },
+    "longevity": "10-12 Hours",
+    "projection": "Strong & Warm",
+    "occasion": "Formal Events, Evenings & Winter Season",
+    "howToUse": "Spray 2-3 times on pulse points — wrists, neck, and chest. For enhanced longevity, apply a fragrance-free moisturizer beforehand. Spray from a distance of 6 inches."
+  },
+  {
+    "id": "vespera-oud",
+    "name": "VESPERA Oud",
+    "type": "Eau de Parfum",
+    "size": "50ml",
+    "mrp": 2499,
+    "price": 1199,
+    "image": "/assets/product_oud_new.jpg",
+    "certImage": "/assets/product_oud_infographic.jpg",
+    "notes": "Oud · Amber · Incense",
+    "category": "women",
+    "description": "A commanding, smoky oud signature rich with precious agarwood, golden amber resin, and sacred incense.",
+    "longDescription": "VESPERA Oud is an intense, deeply evocative journey into the heart of Middle Eastern luxury. It opens with a burst of saffron and smoky incense, building to a powerful core of aged agarwood (oud) and warm amber resin. The base is a lingering trail of sandalwood and musk — powerful, mysterious, and unforgettable.",
+    "olfactiveNotes": {
+      "top": "Saffron, Incense, Black Pepper",
+      "heart": "Cambodian Oud, Golden Amber, Frankincense",
+      "base": "Sandalwood, Dark Musk, Leather"
+    },
+    "longevity": "12+ Hours",
+    "projection": "Heavy & Room-Filling",
+    "occasion": "Special Occasions, Weddings & Evening Events",
+    "howToUse": "A potent formulation — 1-2 sprays maximum on the neck or wrists. Let it settle naturally to appreciate the deep, evolving transitions from opening to dry-down."
+  },
+  {
+    "id": "vespera-pure",
+    "name": "VESPERA Pure",
+    "type": "Eau de Parfum",
+    "size": "50ml",
+    "mrp": 2499,
+    "price": 1199,
+    "image": "/assets/product_pure.jpg",
+    "certImage": "/assets/product_pure_infographic.jpg",
+    "notes": "White Musk · Vetiver · Bamboo",
+    "category": "men",
+    "description": "A clean, luminous, skin-close fragrance that captures the quiet elegance of pure white musk and soft vetiver.",
+    "longDescription": "VESPERA Pure is minimalism elevated to luxury. Inspired by the stillness of a sunlit morning, it opens with a sheer breeze of bamboo and green leaves, blooming into a heart of soft white florals. The base is a weightless cushion of clean musk and earthy vetiver — effortlessly pure, endlessly wearable.",
+    "olfactiveNotes": {
+      "top": "Bamboo, Green Tea, Bergamot",
+      "heart": "White Rose, Lily of the Valley, Jasmine",
+      "base": "White Musk, Vetiver, Warm Sandalwood"
+    },
+    "longevity": "8-10 Hours",
+    "projection": "Soft & Intimate",
+    "occasion": "Daily Wear, Office & All-Season Signature",
+    "howToUse": "Spray 2-3 times on pulse points — wrists, neck, and behind ears. A versatile everyday scent that pairs beautifully with light moisturiser for a radiant skin-scent effect."
+  },
+  {
+    "id": "vespera-dark",
+    "name": "VESPERA Dark",
+    "type": "Eau de Parfum",
+    "size": "50ml",
+    "mrp": 2499,
+    "price": 1199,
+    "image": "/assets/product_dark.jpg",
+    "certImage": "/assets/product_dark_infographic.jpg",
+    "notes": "Dark Cocoa · Leather · Spices",
+    "category": "men",
+    "description": "An intense, mysterious fragrance featuring dark cocoa, smoked leather, and warm spices.",
+    "longDescription": "VESPERA Dark is a seductive blend for the night. It starts with a bold hit of dark cocoa and cardamom, moving into a heart of smoked leather. The base settles into a rich blend of vanilla and patchouli, creating an unforgettable aura.",
+    "olfactiveNotes": {
+      "top": "Dark Cocoa, Cardamom, Black Pepper",
+      "heart": "Smoked Leather, Tobacco Leaf, Clove",
+      "base": "Madagascar Vanilla, Patchouli, Amber"
+    },
+    "longevity": "10-12 Hours",
+    "projection": "Strong & Lasting",
+    "occasion": "Evenings, Night Out & Date Nights",
+    "howToUse": "Spray 1-2 times on pulse points. The fragrance is highly concentrated and will evolve beautifully throughout the night."
+  }
+]

@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { AppContext } from '../context/AppContext';
 
 export default function WhatsAppButton() {
   const [showTooltip, setShowTooltip] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const { homepageSettings } = useContext(AppContext);
 
   useEffect(() => {
     // Show tooltip after 3 seconds, hide after 11 seconds (shows for 8 seconds total)
@@ -20,9 +22,10 @@ export default function WhatsAppButton() {
     };
   }, []);
 
-  const phoneNumber = '919310912279';
-  const message = 'Hi ZENV! I would like to know more about your luxury fragrances.';
-  const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+  const rawPhoneNumber = homepageSettings?.whatsappNumber || '9187584729';
+  const cleanPhoneNumber = String(rawPhoneNumber).replace(/[^0-9]/g, '') || '9187584729';
+  const message = 'Hi VESPERA! I would like to know more about your luxury fragrances.';
+  const whatsappUrl = `https://wa.me/${cleanPhoneNumber}?text=${encodeURIComponent(message)}`;
 
   return (
     <div 
@@ -38,7 +41,7 @@ export default function WhatsAppButton() {
         target="_blank"
         rel="noopener noreferrer"
         className="whatsapp-float-btn"
-        aria-label="Chat with ZENV on WhatsApp"
+        aria-label="Chat with VESPERA on WhatsApp"
       >
         <span className="whatsapp-pulse-ring"></span>
         <span className="whatsapp-pulse-ring-outer"></span>

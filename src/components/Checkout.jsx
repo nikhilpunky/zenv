@@ -2,21 +2,6 @@ import React, { useContext, useState } from 'react';
 import { AppContext } from '../context/AppContext';
 import { X, CheckCircle, CreditCard, ShieldCheck } from 'lucide-react';
 
-const loadRazorpayScript = () => {
-  return new Promise((resolve) => {
-    if (window.Razorpay) {
-      resolve(true);
-      return;
-    }
-    const script = document.createElement('script');
-    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-    script.async = true;
-    script.onload = () => resolve(true);
-    script.onerror = () => resolve(false);
-    document.body.appendChild(script);
-  });
-};
-
 export default function Checkout() {
   const {
     cart,
@@ -28,7 +13,8 @@ export default function Checkout() {
     setIsCheckoutOpen,
     coupons,
     appliedCoupon,
-    setAppliedCoupon
+    setAppliedCoupon,
+    packageMode
   } = useContext(AppContext);
 
   const [formData, setFormData] = useState({
@@ -46,6 +32,7 @@ export default function Checkout() {
   const [paymentMethod, setPaymentMethod] = useState('prepaid');
   const [orderState, setOrderState] = useState('form'); // form, success
   const [orderNumber, setOrderNumber] = useState('');
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
   // Coupon UI States
   const [couponInput, setCouponInput] = useState('');
@@ -121,63 +108,48 @@ export default function Checkout() {
         return;
       }
 
-      const loaded = await loadRazorpayScript();
-      if (!loaded) {
-        alert('Failed to load Razorpay SDK. Please check your internet connection and try again.');
-        return;
-      }
+      setIsProcessingPayment(true);
 
-      const keyId = import.meta.env.VITE_RAZORPAY_KEY_ID;
-      if (!keyId) {
-        alert('Razorpay Key ID is not configured. Please check your environment configuration.');
-        return;
-      }
-
+      const randomOrder = 'VP-' + Math.floor(100000 + Math.random() * 900000);
       const fullAddress = `${formData.address1}${formData.address2 ? ', ' + formData.address2 : ''}${formData.landmark ? ' (Landmark: ' + formData.landmark + ')' : ''}, ${formData.city}, ${formData.state} - ${formData.pincode}`;
-      const randomOrder = 'ZV-' + Math.floor(100000 + Math.random() * 900000);
 
-      const options = {
-        key: keyId,
-        amount: getFinalPrice() * 100, // Amount in paise
-        currency: 'INR',
-        name: 'ZENV',
-        description: 'Luxury Fragrance Order',
-        image: '/assets/discovery_set.png',
-        handler: function (response) {
+      setTimeout(async () => {
+        try {
+          const res = await fetch('/api/prepaid-order', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              order_reference: randomOrder,
+              name: formData.name,
+              email: formData.email,
+              phone: formData.phone,
+              address: fullAddress,
+              pincode: formData.pincode,
+              city: formData.city,
+              state: formData.state,
+              items: cart.map(item => `${item.name} (${item.size}) x ${item.quantity}`).join(', '),
+              itemDetails: cart.map(item => `${item.name}|${item.size}|${item.quantity}|${item.price}`).join(';'),
+              amount: getFinalPrice(),
+              coupon_code: appliedCoupon ? appliedCoupon.code : '',
+              discount_amount: getCouponDiscount()
+            })
+          });
+          
+          if (!res.ok) {
+            throw new Error('Prepaid order creation failed');
+          }
+          
           setOrderNumber(randomOrder);
           setOrderState('success');
-        },
-        prefill: {
-          name: formData.name,
-          email: formData.email,
-          contact: formData.phone
-        },
-        notes: {
-          order_reference: randomOrder,
-          name: formData.name.substring(0, 255),
-          email: formData.email.substring(0, 255),
-          phone: formData.phone.substring(0, 50),
-          address: fullAddress.substring(0, 255),
-          pincode: formData.pincode.substring(0, 10),
-          city: formData.city.substring(0, 100),
-          state: formData.state.substring(0, 100),
-          items: cart.map(item => `${item.name} (${item.size}) x ${item.quantity}`).join(', ').substring(0, 255),
-          itemDetails: cart.map(item => `${item.name}|${item.size}|${item.quantity}|${item.price}`).join(';').substring(0, 255),
-          coupon_code: appliedCoupon ? appliedCoupon.code : '',
-          discount_amount: String(getCouponDiscount())
-        },
-        theme: {
-          color: '#B38E34' // matches --color-gold-deep
+        } catch (err) {
+          console.error('Failed to notify server about prepaid order:', err);
+          alert('Mock payment simulation encountered an error. Please try again.');
+        } finally {
+          setIsProcessingPayment(false);
         }
-      };
-
-      try {
-        const rzp = new window.Razorpay(options);
-        rzp.open();
-      } catch (err) {
-        console.error('Razorpay initialization failed:', err);
-        alert('Could not initialize payment window. Please try again.');
-      }
+      }, 1500);
     } else {
       // COD flow
       const randomOrder = 'ZV-' + Math.floor(100000 + Math.random() * 900000);
@@ -315,6 +287,39 @@ export default function Checkout() {
         onClick={(e) => e.stopPropagation()}
         style={{ maxWidth: orderState === 'success' ? '540px' : '960px' }}
       >
+        {isProcessingPayment && (
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(255, 255, 255, 0.95)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 100
+          }}>
+            <style>{`
+              @keyframes payment-spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+              }
+            `}</style>
+            <div style={{
+              width: '40px',
+              height: '40px',
+              border: '3px solid #f3f3f3',
+              borderTop: '3px solid #B38E34',
+              borderRadius: '50%',
+              animation: 'payment-spin 1s linear infinite',
+              marginBottom: '1rem'
+            }} />
+            <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.5rem', marginBottom: '0.5rem' }}>Processing Secure Payment</h3>
+            <p style={{ fontSize: '0.85rem', color: 'var(--color-charcoal-medium)' }}>Simulating payment gateway transaction...</p>
+          </div>
+        )}
         <button 
           className="modal-close-btn" 
           onClick={orderState === 'success' ? handleSuccessClose : () => setIsCheckoutOpen(false)}
@@ -439,7 +444,7 @@ export default function Checkout() {
                 />
                 {checkingServiceability && (
                   <div style={{ fontSize: '0.75rem', color: '#B38E34', marginTop: '0.25rem' }}>
-                    Checking serviceability with Delhivery...
+                    Simulating Delhivery serviceability check...
                   </div>
                 )}
                 {!isServiceable && paymentMethod === 'prepaid' && (
@@ -449,7 +454,7 @@ export default function Checkout() {
                 )}
               </div>
 
-              <h3 className="checkout-section-header" style={{ marginTop: '2rem' }}>3. Payment Method</h3>
+              <h3 className="checkout-section-header" style={{ marginTop: '2rem' }}>3. Payment Method (SIMULATED)</h3>
               <div className="payment-method-selector">
                 
                 <div 
@@ -460,9 +465,9 @@ export default function Checkout() {
                     {paymentMethod === 'prepaid' && <div className="payment-radio-inner" />}
                   </div>
                   <div className="payment-method-text">
-                    <span className="payment-method-title">Instant Prepaid (UPI, Cards, NetBanking)</span>
+                    <span className="payment-method-title">Simulated Prepaid (UPI, Cards, NetBanking)</span>
                     <span className="payment-method-desc" style={{ color: 'green', fontWeight: 500 }}>
-                      Founder Launch Pricing Activated (Save ₹{cartSavings})
+                      Founder Launch Pricing Activated (Free Demo Simulation - Save ₹{cartSavings})
                     </span>
                   </div>
                 </div>
@@ -475,9 +480,9 @@ export default function Checkout() {
                     {paymentMethod === 'cod' && <div className="payment-radio-inner" />}
                   </div>
                   <div className="payment-method-text">
-                    <span className="payment-method-title">Cash on Delivery (COD)</span>
+                    <span className="payment-method-title">Simulated Cash on Delivery (COD)</span>
                     <span className="payment-method-desc" style={{ color: 'red' }}>
-                      Regular MRP pricing applies. Launch discounts do not apply.
+                      Simulated COD checkout. No actual packaging or shipping occurs.
                     </span>
                   </div>
                 </div>
@@ -585,10 +590,10 @@ export default function Checkout() {
               <div style={{ marginTop: 'auto' }}>
                 <div className="summary-row">
                   <span>Items Subtotal</span>
-                  <span>₹{paymentMethod === 'prepaid' ? cartMRPTotal : cartMRPTotal}</span>
+                  <span>₹{packageMode === '4999_package' ? cartSubtotal : (paymentMethod === 'prepaid' ? cartMRPTotal : cartMRPTotal)}</span>
                 </div>
                 
-                {paymentMethod === 'prepaid' && cartSavings > 0 && (
+                {packageMode !== '4999_package' && paymentMethod === 'prepaid' && cartSavings > 0 && (
                   <div className="summary-row summary-savings">
                     <span>Founder Launch Discount</span>
                     <span>- ₹{cartSavings}</span>

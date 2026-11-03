@@ -3,7 +3,7 @@ import { AppContext } from '../context/AppContext';
 import { Check, ArrowRight } from 'lucide-react';
 
 export default function ProductCard({ product }) {
-  const { addToCart, setQuickViewProduct } = useContext(AppContext);
+  const { addToCart, setQuickViewProduct, packageMode } = useContext(AppContext);
   const [added, setAdded] = useState(false);
 
   const isOutOfStock = typeof product.stock === 'number' && product.stock <= 0;
@@ -29,9 +29,11 @@ export default function ProductCard({ product }) {
       >
         {isOutOfStock ? (
           <span className="pc-badge" style={{ background: 'var(--color-charcoal-medium)', color: '#fff' }}>Sold Out</span>
-        ) : (
-          <span className="pc-badge">Launch Offer</span>
-        )}
+        ) : packageMode !== '4999_package' && product.isOfferProduct ? (
+          <span className="pc-badge">Special Offer</span>
+        ) : product.isBestSeller ? (
+          <span className="pc-badge">Best Seller</span>
+        ) : null}
         <img
           src={product.images?.[0] || product.image}
           alt={`${product.name} luxury fragrance bottle`}
@@ -58,7 +60,9 @@ export default function ProductCard({ product }) {
 
         {/* Price row */}
         <div className="pc-price-row">
-          <span className="pc-mrp">MRP ₹{product.mrp}</span>
+          {packageMode !== '4999_package' && product.mrp && product.mrp > product.price && (
+            <span className="pc-mrp">MRP ₹{product.mrp}</span>
+          )}
           <span className="pc-price">₹{product.price}</span>
         </div>
 

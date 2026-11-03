@@ -6,6 +6,7 @@ import ProductCard from './ProductCard';
 export default function ProductGrid() {
   const { 
     products, 
+    categories,
     activeCategory, 
     setActiveCategory, 
     searchTerm 
@@ -16,24 +17,39 @@ export default function ProductGrid() {
     // 1. Search Query Filter
     if (searchTerm) {
       const query = searchTerm.toLowerCase();
-      const matchName = product.name.toLowerCase().includes(query);
-      const matchNotes = product.notes.toLowerCase().includes(query);
-      const matchDesc = product.description.toLowerCase().includes(query);
+      const matchName = product.name?.toLowerCase().includes(query);
+      const matchNotes = product.notes?.toLowerCase().includes(query);
+      const matchDesc = product.description?.toLowerCase().includes(query);
       if (!matchName && !matchNotes && !matchDesc) return false;
     }
 
     // 2. Category Filter
     if (activeCategory === 'ALL') return true;
-    if (activeCategory === 'WOMEN') return product.category === 'women';
-    if (activeCategory === 'MEN') return product.category === 'men';
-    if (activeCategory === 'UNISEX') return product.category === 'unisex';
-    if (activeCategory === 'DISCOVERY') return product.isDiscovery === true;
+    if (activeCategory === 'DISCOVERY') {
+      return product.isDiscovery === true || product.category?.toLowerCase() === 'discovery';
+    }
     
-    // For Oils category
-    if (activeCategory === 'OILS') return false;
+    // For Oils category: show coming soon if no products, otherwise filter
+    if (activeCategory === 'OILS') {
+      const hasOils = products.some(p => p.category?.toLowerCase() === 'oils');
+      if (!hasOils) return false;
+      return product.category?.toLowerCase() === 'oils';
+    }
 
-    return true;
+    return product.category && product.category.toLowerCase() === activeCategory.toLowerCase();
   });
+
+  const getCategoryTitle = () => {
+    if (activeCategory === 'ALL') return "Featured Fragrances";
+    const foundCat = Array.isArray(categories) && categories.find(c => c.id.toUpperCase() === activeCategory);
+    if (foundCat) return foundCat.label;
+    if (activeCategory === 'WOMEN') return "Feminine Collection";
+    if (activeCategory === 'MEN') return "Masculine Collection";
+    if (activeCategory === 'UNISEX') return "Unisex Fragrances";
+    if (activeCategory === 'DISCOVERY') return "Discovery Sets";
+    if (activeCategory === 'OILS') return "Perfume Oils";
+    return `${activeCategory.charAt(0) + activeCategory.slice(1).toLowerCase()} Fragrances`;
+  };
 
   return (
     <section id="collection" className="section-padding" style={{ background: 'var(--bg-white)' }}>
@@ -42,15 +58,10 @@ export default function ProductGrid() {
         <div className="section-header">
           <div>
             <span className="hero-subtitle" style={{ marginBottom: '0.5rem', display: 'block' }}>
-              ZENV Signature Range
+              VESPERA Signature Range
             </span>
             <h2 className="section-title">
-              {activeCategory === 'ALL' && "Featured Fragrances"}
-              {activeCategory === 'WOMEN' && "Feminine Collection"}
-              {activeCategory === 'MEN' && "Masculine Collection"}
-              {activeCategory === 'UNISEX' && "Unisex Fragrances"}
-              {activeCategory === 'DISCOVERY' && "Discovery Sets"}
-              {activeCategory === 'OILS' && "Perfume Oils"}
+              {getCategoryTitle()}
             </h2>
           </div>
           
@@ -65,7 +76,7 @@ export default function ProductGrid() {
         </div>
 
         {/* Dynamic Product Grid */}
-        {activeCategory === 'OILS' ? (
+        {activeCategory === 'OILS' && filteredProducts.length === 0 ? (
           <div style={{
             textAlign: 'center',
             padding: '6rem 2rem',

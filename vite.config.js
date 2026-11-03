@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     port: 3217,
     host: '0.0.0.0',
-    allowedHosts: ['at.cyberpunk.co.in', 'zenvparfum.com'],
+    allowedHosts: true,
     proxy: {
       '/api': {
         target: 'http://localhost:3218',
@@ -18,7 +18,7 @@ export default defineConfig({
   preview: {
     port: 3217,
     host: '0.0.0.0',
-    allowedHosts: ['at.cyberpunk.co.in', 'zenvparfum.com'],
+    allowedHosts: true,
     proxy: {
       '/api': {
         target: 'http://localhost:3218',

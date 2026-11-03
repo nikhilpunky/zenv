@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useContext } from 'react';
+import { AppContext } from '../context/AppContext';
 
 /* ─── SVG luxury gold icons ──────────────────────────────────────────────── */
 const IconHourglass = () => (
@@ -25,55 +26,33 @@ const IconIndia = () => (
   </svg>
 );
 
-const features = [
-  {
-    Icon: IconHourglass,
-    title: 'Long Lasting',
-    description:
-      'Expertly formulated to linger beautifully on skin for up to 12 hours, evolving gracefully through the day.',
-  },
-  {
-    Icon: IconLeaf,
-    title: 'Premium Ingredients',
-    description:
-      'Blended from the finest natural reserves — pure essential oils, rare resins, and hand-selected botanicals.',
-  },
-  {
-    Icon: IconIndia,
-    title: 'Made in India',
-    description:
-      "Proudly crafted in small batches locally, celebrating India's rich olfactory heritage and world-class standards.",
-  },
-];
-
 export default function Highlights() {
-  const sectionRef = useRef(null);
+  const { homepageSettings } = useContext(AppContext);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.querySelectorAll('.wcz-card').forEach((card, i) => {
-              card.style.animationDelay = `${i * 0.15}s`;
-              card.classList.add('wcz-card--visible');
-            });
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.15 }
-    );
-    if (sectionRef.current) observer.observe(sectionRef.current);
-    return () => observer.disconnect();
-  }, []);
+  const features = [
+    {
+      Icon: IconHourglass,
+      title: homepageSettings?.highlight1Title || 'Long Lasting',
+      description: homepageSettings?.highlight1Desc || 'Expertly formulated to linger beautifully on skin for up to 12 hours, evolving gracefully through the day.'
+    },
+    {
+      Icon: IconLeaf,
+      title: homepageSettings?.highlight2Title || 'Premium Ingredients',
+      description: homepageSettings?.highlight2Desc || 'Blended from the finest natural reserves — pure essential oils, rare resins, and hand-selected botanicals.'
+    },
+    {
+      Icon: IconIndia,
+      title: homepageSettings?.highlight3Title || 'Made in India',
+      description: homepageSettings?.highlight3Desc || "Proudly crafted in small batches locally, celebrating India's rich olfactory heritage and world-class standards."
+    }
+  ];
 
   return (
-    <section className="wcz-section" id="why-choose-zenv" ref={sectionRef} aria-label="Why Choose ZENV">
+    <section className="wcz-section" id="why-choose-vespera" aria-label="Why Choose VESPERA">
       <div className="wcz-container">
         {/* Section heading */}
         <div className="wcz-heading">
-          <h2 className="wcz-title">Why Choose ZENV?</h2>
+          <h2 className="wcz-title">{homepageSettings?.highlightsTitle || 'Why Choose VESPERA?'}</h2>
           <div className="wcz-title-accent" aria-hidden="true">
             <span className="wcz-dot" />
             <span className="wcz-line" />
@@ -82,7 +61,7 @@ export default function Highlights() {
         </div>
 
         {/* Feature cards */}
-        <div className="wcz-grid" ref={sectionRef}>
+        <div className="wcz-grid">
           {features.map(({ Icon, title, description }, idx) => (
             <div className="wcz-card" key={idx}>
               <div className="wcz-icon-ring" aria-hidden="true">

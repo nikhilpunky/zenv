@@ -3,7 +3,7 @@ import { AppContext } from '../context/AppContext';
 import { Mail, Phone, MapPin } from 'lucide-react';
 
 export default function Footer() {
-  const { setActiveLegalModal, setActiveCategory } = useContext(AppContext);
+  const { setActiveLegalModal, setActiveCategory, homepageSettings, setIsServicesOpen } = useContext(AppContext);
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
 
@@ -37,7 +37,7 @@ export default function Footer() {
             </p>
             {subscribed ? (
               <p style={{ color: 'var(--color-gold)', fontSize: '0.85rem', fontWeight: 500 }}>
-                Thank you for subscribing to ZENV Parfums.
+                Thank you for subscribing to Vespera Parfums.
               </p>
             ) : (
               <form className="newsletter-form" onSubmit={handleSubscribe}>
@@ -81,43 +81,58 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Column 2: Brand / Contact */}
+          {/* Column 2: Brand & Privileges */}
           <div>
-            <h4 className="footer-col-title">Our Story</h4>
+            <h4 className="footer-col-title">Bespoke Privileges</h4>
             <ul className="footer-links">
               <li className="footer-link-item">
-                <a href="#story">About ZENV</a>
+                <a href="#services" onClick={(e) => { e.preventDefault(); setIsServicesOpen(true); }} style={{ color: 'var(--color-gold-deep)', fontWeight: 600 }}>
+                  ✦ All Bespoke Services
+                </a>
               </li>
               <li className="footer-link-item">
-                <a href="#story">Craftsmanship</a>
+                <a href="#services" onClick={(e) => { e.preventDefault(); setIsServicesOpen(true); }}>
+                  Flacon Laser Engraving
+                </a>
+              </li>
+              <li className="footer-link-item">
+                <a href="#services" onClick={(e) => { e.preventDefault(); setIsServicesOpen(true); }}>
+                  Corporate & Wedding Gifting
+                </a>
+              </li>
+              <li className="footer-link-item">
+                <a href="#services" onClick={(e) => { e.preventDefault(); setIsServicesOpen(true); }}>
+                  Flacon Refill & Recycling
+                </a>
+              </li>
+              <li className="footer-link-item">
+                <a href="#story">About VESPERA</a>
               </li>
               <li className="footer-link-item" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)' }}>
                 <Mail size={14} style={{ color: 'var(--color-gold)' }} />
-                <span>Zenv2212@gmail.com</span>
+                <span>vesperaparfums@gmail.com</span>
               </li>
               <li className="footer-link-item" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)' }}>
                 <Phone size={14} style={{ color: 'var(--color-gold)' }} />
                 <span>+91 93109 12279</span>
-              </li>
-              <li className="footer-link-item" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)' }}>
-                <MapPin size={14} style={{ color: 'var(--color-gold)' }} />
-                <span>New Delhi, India</span>
               </li>
             </ul>
           </div>
 
           {/* Column 3: Help / Customer Service */}
           <div>
-            <h4 className="footer-col-title">Help</h4>
+            <h4 className="footer-col-title">Customer Care</h4>
             <ul className="footer-links">
               <li className="footer-link-item">
-                <a href="#" onClick={(e) => { e.preventDefault(); alert('FAQ simulation: Standard orders ship within 24-48 hours with express tracking.') }}>Shipping Policy</a>
+                <a href="#services" onClick={(e) => { e.preventDefault(); setIsServicesOpen(true); }}>
+                  Track Waybill Order
+                </a>
+              </li>
+              <li className="footer-link-item">
+                <a href="#" onClick={(e) => { e.preventDefault(); alert('Shipping SLA: Orders dispatched within 24-48 hours via express air couriers.') }}>Shipping Policy</a>
               </li>
               <li className="footer-link-item">
                 <a href="#" onClick={(e) => { e.preventDefault(); setActiveLegalModal('refund') }}>Returns & Refunds</a>
-              </li>
-              <li className="footer-link-item">
-                <a href="#" onClick={(e) => { e.preventDefault(); alert('Order Tracking simulation: Enter tracking ID from WhatsApp order updates.') }}>Track Order</a>
               </li>
               <li className="footer-link-item">
                 <a href="#" onClick={(e) => { e.preventDefault(); setActiveLegalModal('privacy') }}>Privacy Policy</a>
@@ -135,17 +150,17 @@ export default function Footer() {
         {/* Bottom Footer Details */}
         <div className="footer-bottom">
           <div className="footer-brand">
-            <span className="footer-brand-logo">ZENV</span>
-            <span className="footer-brand-tagline">Crafted to Be Remembered.</span>
+            <span className="footer-brand-logo">VESPERA</span>
+            <span className="footer-brand-tagline">{homepageSettings?.footerAbout || 'Crafted to Be Remembered.'}</span>
           </div>
 
           <div className="footer-copyright">
-            &copy; {new Date().getFullYear()} ZENV Parfums. All rights reserved. Designed for elegance.
+            {homepageSettings?.footerCopyright || `© ${new Date().getFullYear()} VESPERA. All Rights Reserved.`}
           </div>
 
           <div className="footer-socials">
             <a 
-              href="https://instagram.com/Zenv.perfume" 
+              href="https://instagram.com/vespera.parfums" 
               target="_blank" 
               rel="noopener noreferrer" 
               className="footer-social-btn"

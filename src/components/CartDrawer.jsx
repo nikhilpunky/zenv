@@ -12,7 +12,8 @@ export default function CartDrawer() {
     cartSavings,
     isCartOpen,
     setIsCartOpen,
-    setIsCheckoutOpen
+    setIsCheckoutOpen,
+    packageMode
   } = useContext(AppContext);
 
   const handleCheckoutClick = () => {
@@ -112,7 +113,7 @@ export default function CartDrawer() {
                       </div>
 
                       <div className="cart-item-pricing">
-                        {item.mrp && item.mrp > item.price && (
+                        {packageMode !== '4999_package' && item.mrp && item.mrp > item.price && (
                           <div className="cart-item-original-price">
                             ₹{item.mrp * item.quantity}
                           </div>
@@ -134,16 +135,20 @@ export default function CartDrawer() {
         {/* Footer */}
         {cart.length > 0 && (
           <div className="drawer-footer">
-            <div className="summary-row">
-              <span>Original MRP</span>
-              <span style={{ textDecoration: 'line-through' }}>₹{cartMRPTotal}</span>
-            </div>
-            
-            {cartSavings > 0 && (
-              <div className="summary-row summary-savings">
-                <span>Launch Saving</span>
-                <span>- ₹{cartSavings}</span>
-              </div>
+            {packageMode !== '4999_package' && (
+              <>
+                <div className="summary-row">
+                  <span>Original MRP</span>
+                  <span style={{ textDecoration: 'line-through' }}>₹{cartMRPTotal}</span>
+                </div>
+                
+                {cartSavings > 0 && (
+                  <div className="summary-row summary-savings">
+                    <span>Launch Saving</span>
+                    <span>- ₹{cartSavings}</span>
+                  </div>
+                )}
+              </>
             )}
             
             <div className="summary-row">
@@ -152,7 +157,7 @@ export default function CartDrawer() {
             </div>
 
             <div className="summary-row summary-total">
-              <span>Launch Total</span>
+              <span>{packageMode === '4999_package' ? 'Total' : 'Launch Total'}</span>
               <span>₹{cartSubtotal}</span>
             </div>
 

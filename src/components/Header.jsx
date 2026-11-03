@@ -10,7 +10,11 @@ export default function Header() {
     setIsSearchOpen,
     searchTerm,
     setSearchTerm,
-    setIsFinderOpen
+    setIsFinderOpen,
+    isServicesOpen,
+    setIsServicesOpen,
+    setIsAdminMode,
+    homepageSettings
   } = useContext(AppContext);
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -50,9 +54,7 @@ export default function Header() {
                     <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z" />
                     <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z" />
                   </svg>
-                  PRE-LAUNCH OFFER FOR THE FIRST 100 CUSTOMERS
-                  <span className="annbar-dot">✦</span>
-                  EXCLUSIVE DISCOUNTS &amp; EARLY ACCESS
+                  {homepageSettings?.announcementText || 'VESPERA INTERACTIVE DEMO EXPERIENCE — SIMULATED PAYMENTS & MOCK CHECKOUT'}
                   <span className="annbar-dot">✦</span>
                 </span>
               ))}
@@ -68,7 +70,7 @@ export default function Header() {
               aria-label="Claim exclusive pre-launch offer"
             >
               <span className="annbar-cta-shimmer" aria-hidden="true" />
-              <span className="annbar-cta-text">Claim Offer Now</span>
+              <span className="annbar-cta-text">Explore Demo</span>
             </button>
             <button
               className="annbar-dismiss-btn"
@@ -94,8 +96,22 @@ export default function Header() {
           </button>
 
           {/* Left: Brand Logo */}
-          <a href="#" className="nav-logo" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-            ZENV
+          <a href="#" className="nav-logo" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+            VESPERA
+            <span style={{
+              fontSize: '0.55rem',
+              fontWeight: 700,
+              letterSpacing: '0.12em',
+              textTransform: 'uppercase',
+              backgroundColor: 'var(--color-gold-light)',
+              color: 'var(--color-gold-deep)',
+              border: '1px solid rgba(197, 160, 89, 0.4)',
+              padding: '0.2rem 0.5rem',
+              borderRadius: '20px',
+              display: 'inline-flex',
+              alignItems: 'center',
+              lineHeight: 1
+            }}>Demo</span>
           </a>
 
           {/* Center: Navigation Links */}
@@ -110,6 +126,16 @@ export default function Header() {
               Launch Combos
             </a>
             <a 
+              href="#services" 
+              className="nav-link" 
+              onClick={(e) => {
+                e.preventDefault();
+                setIsServicesOpen(true);
+              }}
+            >
+              Services & Privileges
+            </a>
+            <a 
               href="#finder" 
               className="nav-link" 
               onClick={(e) => {
@@ -121,6 +147,17 @@ export default function Header() {
             </a>
             <a href="#story" className="nav-link" onClick={() => handleScrollToSection('story')}>
               Our Story
+            </a>
+            <a 
+              href="#admin" 
+              className="nav-link" 
+              style={{ color: 'var(--color-gold-deep)', fontWeight: '600' }}
+              onClick={(e) => {
+                e.preventDefault();
+                setIsAdminMode(true);
+              }}
+            >
+              Admin Panel
             </a>
           </nav>
 
@@ -136,7 +173,7 @@ export default function Header() {
             
             <button 
               className="nav-icon-btn" 
-              onClick={() => alert('Account dashboard simulation: Welcome Yash Sagar!')}
+              onClick={() => alert('Account dashboard simulation: Welcome to Vespera Console!')}
               aria-label="Account"
             >
               <User size={20} />
@@ -218,6 +255,17 @@ export default function Header() {
                 Launch Packages
               </a>
               <a 
+                href="#services" 
+                className="mobile-nav-link" 
+                onClick={(e) => {
+                  e.preventDefault();
+                  setIsMobileMenuOpen(false);
+                  setIsServicesOpen(true);
+                }}
+              >
+                Services & Privileges
+              </a>
+              <a 
                 href="#finder" 
                 className="mobile-nav-link" 
                 onClick={(e) => {
@@ -234,6 +282,18 @@ export default function Header() {
                 onClick={() => handleScrollToSection('story')}
               >
                 Brand Story
+              </a>
+              <a 
+                href="#admin" 
+                className="mobile-nav-link" 
+                style={{ color: 'var(--color-gold-deep)', fontWeight: 'bold' }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setIsMobileMenuOpen(false);
+                  setIsAdminMode(true);
+                }}
+              >
+                Admin Panel
               </a>
             </nav>
           </div>

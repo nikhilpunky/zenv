@@ -14,7 +14,7 @@ def main():
     txt = Image.new('RGBA', img.size, (255,255,255,0))
     d = ImageDraw.Draw(txt)
     
-    text = "ZENV"
+    text = "VESPERA"
     
     bbox = d.textbbox((0, 0), text, font=font)
     w = bbox[2] - bbox[0]

@@ -8,7 +8,8 @@ export default function ProductQuickView() {
   const { 
     quickViewProduct, 
     setQuickViewProduct, 
-    addToCart 
+    addToCart,
+    packageMode
   } = useContext(AppContext);
 
   const [qty, setQty] = useState(1);
@@ -179,7 +180,9 @@ export default function ProductQuickView() {
 
             <div className="quickview-footer">
               <div className="quickview-price-container">
-                <span className="quickview-mrp">MRP ₹{quickViewProduct.mrp}</span>
+                {packageMode !== '4999_package' && quickViewProduct.mrp && quickViewProduct.mrp > quickViewProduct.price && (
+                  <span className="quickview-mrp">MRP ₹{quickViewProduct.mrp}</span>
+                )}
                 <span className="quickview-price">₹{quickViewProduct.price}</span>
               </div>
 

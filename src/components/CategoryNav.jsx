@@ -1,61 +1,91 @@
 import React, { useContext } from 'react';
 import { AppContext } from '../context/AppContext';
-import { Sparkles, Compass, Layers, Gift, Droplet, Grid } from 'lucide-react';
+import * as Icons from 'lucide-react';
 
 export default function CategoryNav() {
-  const { activeCategory, setActiveCategory } = useContext(AppContext);
+  const { activeCategory, setActiveCategory, categories } = useContext(AppContext);
 
-  const categories = [
-    { id: 'WOMEN', label: "Women's Perfumes", icon: Sparkles },
-    { id: 'MEN', label: "Men's Perfumes", icon: Compass },
-    { id: 'UNISEX', label: "Unisex Fragrances", icon: Layers },
-    { id: 'COMBOS', label: "Gift Sets & Combos", icon: Gift, scrollTarget: 'combo-builder' },
-    { id: 'OILS', label: "Perfume Oils", icon: Droplet },
-    { id: 'DISCOVERY', label: "Discovery Sets", icon: Grid }
-  ];
+  const getIconComponent = (iconName) => {
+    return Icons[iconName] || Icons.Tag;
+  };
 
-  const handleCategorySelect = (cat) => {
-    if (cat.scrollTarget) {
-      const element = document.getElementById(cat.scrollTarget);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
-    } else {
-      setActiveCategory(cat.id);
-      const element = document.getElementById('collection');
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
+  const handleCategorySelect = (catId) => {
+    setActiveCategory(catId);
+    const element = document.getElementById('collection');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
   return (
-    <nav className="category-nav-bar">
-      <div className="container category-nav-container">
-        {/* All Category Button */}
-        <button 
-          className={`category-nav-btn ${activeCategory === 'ALL' ? 'active' : ''}`}
-          onClick={() => setActiveCategory('ALL')}
-        >
-          <Layers size={22} />
-          <span>All Fragrances</span>
-        </button>
+    <section className="category-section" style={{ padding: '3rem 0 1rem', background: '#faf6f0' }}>
+      <div className="container" style={{ textAlign: 'center' }}>
+        <span style={{ 
+          fontSize: '0.72rem', 
+          textTransform: 'uppercase', 
+          letterSpacing: '0.22em', 
+          color: 'var(--color-gold-deep)', 
+          fontWeight: 600, 
+          display: 'block', 
+          marginBottom: '0.6rem' 
+        }}>
+          Explore Our Collections
+        </span>
+        <h2 style={{ 
+          fontFamily: 'var(--font-serif)', 
+          fontSize: '2rem', 
+          fontWeight: 400, 
+          color: 'var(--color-charcoal)', 
+          marginBottom: '2rem' 
+        }}>
+          Shop Fragrances by Category
+        </h2>
 
-        {categories.map((cat) => {
-          const IconComponent = cat.icon;
-          const isActive = activeCategory === cat.id;
-          return (
-            <button
-              key={cat.id}
-              className={`category-nav-btn ${isActive ? 'active' : ''}`}
-              onClick={() => handleCategorySelect(cat)}
-            >
-              <IconComponent size={22} />
-              <span>{cat.label}</span>
-            </button>
-          );
-        })}
+        {/* Visual Category Cards Grid */}
+        <div className="category-cards-grid">
+          {/* Static 'All Fragrances' card */}
+          <div 
+            className={`category-card ${activeCategory === 'ALL' ? 'active' : ''}`}
+            onClick={() => handleCategorySelect('ALL')}
+          >
+            <img src="/assets/hero_luxury_bg.png" alt="All Fragrances" className="category-card-img" />
+            <div className="category-card-overlay" />
+            <div className="category-card-content">
+              <div className="category-card-icon">
+                <Icons.Layers size={22} />
+              </div>
+              <h3 className="category-card-title">All Fragrances</h3>
+            </div>
+          </div>
+
+          {Array.isArray(categories) && categories.map((cat) => {
+            const IconComponent = getIconComponent(cat.icon);
+            const catIdUpper = cat.id.toUpperCase();
+            const isActive = activeCategory === catIdUpper;
+            return (
+              <div 
+                key={cat.id} 
+                className={`category-card ${isActive ? 'active' : ''}`}
+                onClick={() => handleCategorySelect(catIdUpper)}
+              >
+                <img 
+                  src={cat.image || '/assets/product_sample.png'} 
+                  alt={cat.label} 
+                  className="category-card-img" 
+                  onError={(e) => { e.target.src = '/assets/product_sample.png'; }}
+                />
+                <div className="category-card-overlay" />
+                <div className="category-card-content">
+                  <div className="category-card-icon">
+                    <IconComponent size={22} />
+                  </div>
+                  <h3 className="category-card-title">{cat.label}</h3>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
-    </nav>
+    </section>
   );
 }

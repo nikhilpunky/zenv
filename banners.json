@@ -1,0 +1,10 @@
+[
+  {
+    "id": "banner-1",
+    "image": "/assets/hero_perfume_v6.jpg",
+    "title": "Crafted to\nBecome Your\nSignature Scent",
+    "subtitle": "VESPERA Parfums — Maison de Haute Parfumerie",
+    "description": "Premium fragrances designed with timeless elegance, finest ingredients, and enduring performance for every occasion.",
+    "isActive": true
+  }
+]
